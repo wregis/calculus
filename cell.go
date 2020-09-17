@@ -19,7 +19,7 @@ func NewCell(value interface{}) Cell {
 	switch value := value.(type) {
 	case bool:
 		cell.valueType = CellValueTypeBoolean
-	case int8, uint8, int16, uint16, int32, uint32, int64, uint64, float32, float64:
+	case int, uint, int8, uint8, int16, uint16, int32, uint32, int64, uint64, float32, float64:
 		cell.valueType = CellValueTypeNumber
 	case string:
 		if len(value) > 0 && value[0] == '=' {

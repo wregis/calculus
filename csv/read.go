@@ -16,7 +16,7 @@ func Read(in io.Reader) (calculus.Workbook, error) {
 
 func (f File) Read(in io.Reader) (calculus.Workbook, error) {
 	workbook := calculus.New()
-	sheet := workbook.ActiveSheet()
+	sheet, _ := workbook.AddSheet("Sheet1")
 
 	reader := bufio.NewReader(in)
 	var lineNo int

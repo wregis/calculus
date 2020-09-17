@@ -13,8 +13,9 @@ const (
 )
 
 // NewSheet creates a new empty sheet.
-func NewSheet() Sheet {
+func NewSheet(name string) Sheet {
 	return &sheet{
+		name:  name,
 		state: SheetStateVisible,
 		rows: &rows{
 			rows: make(map[int]Row),

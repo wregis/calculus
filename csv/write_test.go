@@ -14,7 +14,7 @@ func TestEmptyComposition(t *testing.T) {
 
 	buf := new(bytes.Buffer)
 	err := csv.Write(workbook, buf)
-	assert.NoError(t, err)
+	assert.Error(t, err)
 	assert.Empty(t, buf.String())
 }
 
@@ -22,7 +22,7 @@ func TestSimpleStringComposition(t *testing.T) {
 	const golden = "Hello,World\nFoo,Bar,Baz"
 
 	workbook := calculus.New()
-	sheet := workbook.ActiveSheet()
+	sheet, _ := workbook.AddSheet("TestSheet1")
 	sheet.SetValue(0, 0, "Hello")
 	sheet.SetValue(0, 1, "World")
 	sheet.SetValueByRef("A2", "Foo")
@@ -39,7 +39,7 @@ func TestCustomParamsComposition(t *testing.T) {
 	const golden = "\"Hi there!\"\n;\"Go ➡️\"\n;;\"See a 🌈\"\n;;;\"No escape \\\""
 
 	workbook := calculus.New()
-	sheet := workbook.ActiveSheet()
+	sheet, _ := workbook.AddSheet("TestSheet1")
 	sheet.SetValue(0, 0, "Hi there!")
 	sheet.SetValue(1, 1, "Go ➡️")
 	sheet.SetValue(2, 2, "See a 🌈")
@@ -60,7 +60,7 @@ func TestVariousTypesComposition(t *testing.T) {
 	const golden = "One,Two,Three\n3.1415926535\n\ntrue,false"
 
 	workbook := calculus.New()
-	sheet := workbook.ActiveSheet()
+	sheet, _ := workbook.AddSheet("TestSheet1")
 	sheet.SetValue(0, 0, "Zero")
 	sheet.SetValue(0, 0, "One")
 	sheet.SetValue(0, 1, "Two")

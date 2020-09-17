@@ -10,20 +10,20 @@ import (
 	"github.com/wregis/calculus"
 )
 
-func Write(workbook calculus.Workbook, out io.Writer) (err error) {
+func Write(workbook calculus.Workbook, out io.Writer) error {
 	file := New()
 	return file.Write(workbook, out)
 }
 
 func (f File) Write(workbook calculus.Workbook, out io.Writer) (err error) {
-	sheets := workbook.Sheets()
-	if len(sheets) != 1 {
-		return calculus.NewError(nil, "CSV can only have a single sheet")
+	sheet := workbook.ActiveSheet()
+	if sheet == nil {
+		return calculus.NewError(nil, "No sheet to write CSV")
 	}
 
 	prevRow := 0
 	writer := bufio.NewWriter(out)
-	sheets[0].Rows().Iterate(func(rIndex int, row calculus.Row) {
+	sheet.Rows().StableIterate(func(rIndex int, row calculus.Row) {
 		if prevRow != 0 {
 			writer.WriteRune('\n')
 		}
@@ -35,7 +35,7 @@ func (f File) Write(workbook calculus.Workbook, out io.Writer) (err error) {
 		prevRow++
 
 		prevCol := 0
-		row.Iterate(func(cIndex int, cell calculus.Cell) {
+		row.StableIterate(func(cIndex int, cell calculus.Cell) {
 			if prevCol != 0 {
 				writer.WriteString(f.Delimiter)
 			}
@@ -70,7 +70,7 @@ func (f File) Write(workbook calculus.Workbook, out io.Writer) (err error) {
 	})
 	writer.Flush()
 
-	return nil
+	return err
 }
 
 func (f File) stringValue(value interface{}) string {

@@ -10,6 +10,8 @@ type Rows interface {
 	SetCell(int, int, Cell)
 	// Iterate calls a callback to each row stored.
 	Iterate(func(int, Row))
+	// StableIterate calls a callback to each row stored on a stable order.
+	StableIterate(func(int, Row))
 }
 
 type rows struct {
@@ -33,6 +35,15 @@ func (r *rows) SetCell(row, column int, cell Cell) {
 }
 
 func (r *rows) Iterate(cb func(int, Row)) {
+	if r.rows == nil {
+		return
+	}
+	for key, row := range r.rows {
+		cb(key, row)
+	}
+}
+
+func (r *rows) StableIterate(cb func(int, Row)) {
 	if r.rows == nil {
 		return
 	}
@@ -60,6 +71,8 @@ type Row interface {
 	SetCell(int, Cell)
 	// Iterate calls a callback to each cell stored.
 	Iterate(cb func(int, Cell))
+	// StableIterate calls a callback to each row stored on a stable order.
+	StableIterate(func(int, Cell))
 	// Hidden tells if the row is hidden.
 	Hidden() bool
 	// SetHidden forces a row to be hidden or not.
@@ -88,6 +101,15 @@ func (r *row) SetCell(column int, cell Cell) {
 }
 
 func (r *row) Iterate(cb func(int, Cell)) {
+	if r.cells == nil {
+		return
+	}
+	for key, cell := range r.cells {
+		cb(key, cell)
+	}
+}
+
+func (r *row) StableIterate(cb func(int, Cell)) {
 	if r.cells == nil {
 		return
 	}

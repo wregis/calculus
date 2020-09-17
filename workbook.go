@@ -3,10 +3,8 @@ package calculus
 // New creates a workbook with default options and a single sheet.
 func New() Workbook {
 	return &workbook{
-		activeSheet: 0,
-		sheets: []Sheet{
-			NewSheet(),
-		},
+		activeSheet:          0,
+		sheets:               []Sheet{},
 		showHorizontalScroll: true,
 		showVerticalScroll:   true,
 		showSheetTabs:        true,
@@ -59,7 +57,7 @@ func (w *workbook) AddSheet(name string) (Sheet, error) {
 	if w.Sheet(name) != nil {
 		return nil, NewErrorf(nil, "Workbook already contains a sheet named %s", name)
 	}
-	sheet := NewSheet()
+	sheet := NewSheet(name)
 	w.sheets = append(w.sheets, sheet)
 	w.activeSheet = len(w.sheets) - 1
 	return sheet, nil
@@ -69,7 +67,7 @@ func (w *workbook) AddSheetFirst(name string) (Sheet, error) {
 	if w.Sheet(name) != nil {
 		return nil, NewErrorf(nil, "Workbook already contains a sheet named %s", name)
 	}
-	sheet := NewSheet()
+	sheet := NewSheet(name)
 	w.sheets = append([]Sheet{sheet}, w.sheets...)
 	w.activeSheet = 0
 	return sheet, nil

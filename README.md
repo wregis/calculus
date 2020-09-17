@@ -17,40 +17,38 @@ To install Calculus, use `go get`:
 go get github.com/wregis/calculus
 ```
 
-This will then make the following packages available to you:
+This will then make the following formats and packages available to you:
 
-* github.com/wregis/calculus
-* github.com/wregis/calculus/csv
-* github.com/wregis/calculus/ods (in development)
-* github.com/wregis/calculus/xls (in development)
-* github.com/wregis/calculus/xlsx (in development)
-
-Format|Read|Write
--|-|-
-CSV|✔️|✔️
-GNumeric|❌|❌
-ODS|❌|❌
-XLS|❌|❌
-XLSX|❌|❌
+Format|Read|Write|Package
+-:|-|-|-
+CSV|✔️|✔️|github.com/wregis/calculus/csv
+GNumeric|❌|❌|github.com/wregis/calculus/gnumeric (planned)
+ODS (Open Document Sheet) |❌|❌|github.com/wregis/calculus/ods (planned)
+MS-XLS (Microsoft Excel Binary File) |❌|❌|github.com/wregis/calculus/xls (planned)
+XLSX (Office Open XML, Spreadsheet ML)|❌|❌|github.com/wregis/calculus/xlsx (planned)
 
 You can import and/or export data using the format package and can handle data using the main package:
 
 ```go
-package foo
+package main
 
 import (
+  "bytes"
+  "fmt"
   "github.com/wregis/calculus"
   "github.com/wregis/calculus/csv"
 )
 
-func DoSomeCsv() {
+func main() {
   workbook := calculus.New()
-  sheet := workbook.ActiveSheet()
+
+  sheet, _ := workbook.AddSheet("Sheet1")
   sheet.SetValue(0, 0, "Hello")
   sheet.SetValue(0, 1, "World")
   sheet.SetValueByRef("A2", "Foo")
   sheet.SetValueByRef("B2", "Bar")
   sheet.SetValueByRef("C2", "Baz")
+  sheet.SetValue(2, 0, 42)
 
   buf := new(bytes.Buffer)
   err := csv.Write(workbook, buf)

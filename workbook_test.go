@@ -2,9 +2,9 @@ package calculus_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
-
 	"github.com/wregis/calculus"
 )
 
@@ -12,6 +12,7 @@ func TestWorkbookNew(t *testing.T) {
 	workbook := calculus.New()
 
 	assert.NotNil(t, workbook)
+	assert.NotNil(t, workbook.Properties())
 	assert.Nil(t, workbook.ActiveSheet())
 	assert.Empty(t, workbook.Sheets())
 }
@@ -52,6 +53,10 @@ func TestWorkbookSheetHandling(t *testing.T) {
 func BenchmarkWorkbookBasicComposition(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		workbook := calculus.New()
+		workbook.Properties().SetApplication("Calculus Test")
+		workbook.Properties().SetCreated(time.Now())
+		workbook.Properties().SetDescription("Calculus test unit")
+
 		sheet, _ := workbook.AddSheet("TestSheet1")
 		sheet.SetValue(0, 0, "Hello")
 		sheet.SetValue(0, 1, "World")

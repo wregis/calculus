@@ -46,3 +46,10 @@ func TestCustomRead(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkRead(b *testing.B) {
+	const input string = "\"First\",\"Second\",\"Third\",\"Fourth\"\n\n\nFoo,Bar,Baz,?\r\n1,2,3,4,,5"
+	for n := 0; n < b.N; n++ {
+		csv.Read(strings.NewReader(input))
+	}
+}

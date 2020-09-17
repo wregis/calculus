@@ -14,6 +14,12 @@ type Rows interface {
 	StableIterate(func(int, Row))
 }
 
+func NewRows() Rows {
+	return &rows{
+		rows: make(map[int]Row),
+	}
+}
+
 type rows struct {
 	rows map[int]Row
 }

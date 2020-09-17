@@ -15,6 +15,8 @@ func New() Workbook {
 type Workbook interface {
 	// Sheet return the sheet with given name or nil if not found.
 	Sheet(string) Sheet
+	// SetActive updates the active sheet index and returns it.
+	SetActive(name string) Sheet
 	// ActiveSheet retrieves the the sheet currently marked as active.
 	ActiveSheet() Sheet
 	// AddSheet creates a new sheet with given name and appends it to the workbook. If another sheet with the same name
@@ -40,6 +42,16 @@ type workbook struct {
 func (w *workbook) Sheet(name string) Sheet {
 	for index := range w.sheets {
 		if w.sheets[index].Name() == name {
+			return w.sheets[index]
+		}
+	}
+	return nil
+}
+
+func (w *workbook) SetActive(name string) Sheet {
+	for index := range w.sheets {
+		if w.sheets[index].Name() == name {
+			w.activeSheet = index
 			return w.sheets[index]
 		}
 	}
@@ -80,6 +92,7 @@ func (w *workbook) RemoveSheet(name string) error {
 			if w.activeSheet >= len(w.sheets) {
 				w.activeSheet--
 			}
+			return nil
 		}
 	}
 	return NewErrorf(nil, "There is no sheet with name %s", name)

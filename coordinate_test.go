@@ -28,6 +28,18 @@ func TestParseCoordinate(t *testing.T) {
 	}
 }
 
+func BenchmarkParseCoordinateLow(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		calculus.ParseCoordinate("E10")
+	}
+}
+
+func BenchmarkParseCoordinateLarge(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		calculus.ParseCoordinate("ALL1000")
+	}
+}
+
 func TestCoordinate(t *testing.T) {
 	cases := []struct {
 		output string
@@ -45,5 +57,17 @@ func TestCoordinate(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Equal(t, testCase.output, key)
 		})
+	}
+}
+
+func BenchmarkCoordinateLow(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		calculus.Coordinate(16, 24)
+	}
+}
+
+func BenchmarkCoordinateLarge(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		calculus.Coordinate(999, 999)
 	}
 }

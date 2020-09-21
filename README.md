@@ -22,7 +22,7 @@ This will then make the following formats and packages available to you:
 Format|Read|Write|Package
 -:|-|-|-
 CSV|✔️|✔️|github.com/wregis/calculus/csv
-GNumeric|❌|❌|github.com/wregis/calculus/gnumeric (planned)
+GNumeric|✔️ (partial)|✔️ (partial)|github.com/wregis/calculus/gnumeric
 ODS (Open Document Sheet) |❌|❌|github.com/wregis/calculus/ods (planned)
 MS-XLS (Microsoft Excel Binary File) |❌|❌|github.com/wregis/calculus/xls (planned)
 XLSX (Office Open XML, Spreadsheet ML)|❌|❌|github.com/wregis/calculus/xlsx (planned)

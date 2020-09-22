@@ -29,7 +29,12 @@ func ComposeWorkbook(wb calculus.Workbook) (*Workbook, error) {
 		},
 		Summary: Summary{
 			Items: []SummaryItems{
-				// {Name: "application", Value: workbook.Properties().Application()},
+				{Name: "application", Value: wb.Properties().Application()},
+				{Name: "author", Value: wb.Properties().Creator()},
+				{Name: "last_author", Value: wb.Properties().LastModifiedBy()},
+				{Name: "title", Value: wb.Properties().Title()},
+				{Name: "category", Value: wb.Properties().Category()},
+				{Name: "keywords", Value: wb.Properties().Keywords()},
 			},
 		},
 		Geometry: Geometry{
@@ -62,7 +67,7 @@ func ComposeWorkbook(wb calculus.Workbook) (*Workbook, error) {
 			Rows:        Rows{DefaultSizePts: 12.8},
 			SheetLayout: SheetLayout{TopLeft: "A1"},
 		}
-		s.Rows().Iterate(func(rIndex int, r calculus.Row) {
+		s.Rows().Walk(func(rIndex int, r calculus.Row) {
 			row := RowInfo{
 				Number: rIndex,
 				Height: r.Height(),
@@ -73,7 +78,7 @@ func ComposeWorkbook(wb calculus.Workbook) (*Workbook, error) {
 			}
 			sheet.Rows.RowInfo = append(sheet.Rows.RowInfo, row)
 
-			r.Iterate(func(cIndex int, c calculus.Cell) {
+			r.Walk(func(cIndex int, c calculus.Cell) {
 				cell := Cell{
 					Column: cIndex,
 					Row:    rIndex,

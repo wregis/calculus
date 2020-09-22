@@ -17,7 +17,7 @@ func NewSheet(name string) Sheet {
 	return &sheet{
 		name:  name,
 		state: SheetStateVisible,
-		rows: NewRows(),
+		rows:  NewRows(),
 	}
 }
 
@@ -37,6 +37,8 @@ type Sheet interface {
 	SetValue(int, int, interface{})
 	// SetValue stores a value on a specific position using a string coordinate.
 	SetValueByRef(string, interface{})
+	State() SheetState
+	SetState(SheetState)
 }
 
 type sheet struct {
@@ -84,4 +86,12 @@ func (s *sheet) SetValueByRef(coordinate string, value interface{}) {
 		return
 	}
 	s.SetValue(row, column, value)
+}
+
+func (s *sheet) State() SheetState {
+	return s.state
+}
+
+func (s *sheet) SetState(state SheetState) {
+	s.state = state
 }

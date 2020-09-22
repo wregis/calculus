@@ -20,12 +20,12 @@ go get github.com/wregis/calculus
 This will then make the following formats and packages available to you:
 
 Format|Read|Write|Package
--:|-|-|-
+-:|:-:|:-:|-
 CSV|✔️|✔️|github.com/wregis/calculus/csv
-GNumeric|✔️ (partial)|✔️ (partial)|github.com/wregis/calculus/gnumeric
+GNumeric|➖ (partial)|➖ (partial)|github.com/wregis/calculus/gnumeric
 ODS (Open Document Sheet) |❌|❌|github.com/wregis/calculus/ods (planned)
 MS-XLS (Microsoft Excel Binary File) |❌|❌|github.com/wregis/calculus/xls (planned)
-XLSX (Office Open XML, Spreadsheet ML)|❌|❌|github.com/wregis/calculus/xlsx (planned)
+XLSX (Office Open XML, Spreadsheet ML)|➖ (partial)|➖ (partial)|github.com/wregis/calculus/xlsx
 
 You can import and/or export data using the format package and can handle data using the main package:
 

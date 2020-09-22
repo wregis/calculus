@@ -3,7 +3,8 @@ package calculus
 // New creates a workbook with default options and a single sheet.
 func New() Workbook {
 	return &workbook{
-		activeSheet:          0,
+		properties:           &workbookProperties{},
+		activeSheet:          -1,
 		sheets:               []Sheet{},
 		showHorizontalScroll: true,
 		showVerticalScroll:   true,
@@ -13,6 +14,13 @@ func New() Workbook {
 
 // Workbook is a collection of indexed data collections and its metadata.
 type Workbook interface {
+	Properties() WorkbookProperties
+	ShowHorizontalScroll() bool
+	SetShowHorizontalScroll(bool)
+	ShowVerticalScroll() bool
+	SetShowVerticalScroll(bool)
+	ShowSheetTabs() bool
+	SetShowSheetTabs(bool)
 	// Sheet return the sheet with given name or nil if not found.
 	Sheet(string) Sheet
 	// SetActive updates the active sheet index and returns it.
@@ -32,11 +40,40 @@ type Workbook interface {
 }
 
 type workbook struct {
+	properties           WorkbookProperties
 	activeSheet          int
 	sheets               []Sheet
 	showHorizontalScroll bool
 	showVerticalScroll   bool
 	showSheetTabs        bool
+}
+
+func (w *workbook) Properties() WorkbookProperties {
+	return w.properties
+}
+
+func (w *workbook) ShowHorizontalScroll() bool {
+	return w.showHorizontalScroll
+}
+
+func (w *workbook) SetShowHorizontalScroll(showHorizontalScroll bool) {
+	w.showHorizontalScroll = showHorizontalScroll
+}
+
+func (w *workbook) ShowVerticalScroll() bool {
+	return w.showVerticalScroll
+}
+
+func (w *workbook) SetShowVerticalScroll(showVerticalScroll bool) {
+	w.showVerticalScroll = showVerticalScroll
+}
+
+func (w *workbook) ShowSheetTabs() bool {
+	return w.showSheetTabs
+}
+
+func (w *workbook) SetShowSheetTabs(showSheetTabs bool) {
+	w.showSheetTabs = showSheetTabs
 }
 
 func (w *workbook) Sheet(name string) Sheet {

@@ -8,15 +8,15 @@ type Rows interface {
 	Cell(int, int) Cell
 	// SetCell stores a cell on the row.
 	SetCell(int, int, Cell)
-	// Iterate calls a callback to each row stored.
-	Iterate(func(int, Row))
-	// StableIterate calls a callback to each row stored on a stable order.
-	StableIterate(func(int, Row))
+	// Walk calls a callback to each row stored.
+	Walk(func(int, Row))
+	// OrderedWalk calls a callback to each row stored on a stable order.
+	OrderedWalk(func(int, Row))
 }
 
 func NewRows() Rows {
 	return &rows{
-		rows: make(map[int]Row),
+		rows: map[int]Row{},
 	}
 }
 
@@ -40,7 +40,7 @@ func (r *rows) SetCell(row, column int, cell Cell) {
 	r.rows[row].SetCell(column, cell)
 }
 
-func (r *rows) Iterate(cb func(int, Row)) {
+func (r *rows) Walk(cb func(int, Row)) {
 	if r.rows == nil {
 		return
 	}
@@ -49,7 +49,7 @@ func (r *rows) Iterate(cb func(int, Row)) {
 	}
 }
 
-func (r *rows) StableIterate(cb func(int, Row)) {
+func (r *rows) OrderedWalk(cb func(int, Row)) {
 	if r.rows == nil {
 		return
 	}
@@ -65,7 +65,7 @@ func (r *rows) StableIterate(cb func(int, Row)) {
 
 func NewRow() Row {
 	return &row{
-		cells: make(map[int]Cell),
+		cells: map[int]Cell{},
 	}
 }
 
@@ -75,10 +75,10 @@ type Row interface {
 	Cell(int) Cell
 	// SetCell stores a cell on the row.
 	SetCell(int, Cell)
-	// Iterate calls a callback to each cell stored.
-	Iterate(cb func(int, Cell))
-	// StableIterate calls a callback to each row stored on a stable order.
-	StableIterate(func(int, Cell))
+	// Walk calls a callback to each cell stored.
+	Walk(cb func(int, Cell))
+	// OrderedWalk calls a callback to each row stored on a stable order.
+	OrderedWalk(func(int, Cell))
 	// Hidden tells if the row is hidden.
 	Hidden() bool
 	// SetHidden forces a row to be hidden or not.
@@ -106,7 +106,7 @@ func (r *row) SetCell(column int, cell Cell) {
 	r.cells[column] = cell
 }
 
-func (r *row) Iterate(cb func(int, Cell)) {
+func (r *row) Walk(cb func(int, Cell)) {
 	if r.cells == nil {
 		return
 	}
@@ -115,11 +115,11 @@ func (r *row) Iterate(cb func(int, Cell)) {
 	}
 }
 
-func (r *row) StableIterate(cb func(int, Cell)) {
+func (r *row) OrderedWalk(cb func(int, Cell)) {
 	if r.cells == nil {
 		return
 	}
-	keys := make([]int, 0)
+	keys := make([]int, 0, len(r.cells))
 	for key := range r.cells {
 		keys = append(keys, key)
 	}

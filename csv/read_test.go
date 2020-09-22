@@ -1,6 +1,7 @@
 package csv_test
 
 import (
+	"os"
 	"strings"
 	"testing"
 
@@ -47,9 +48,23 @@ func TestCustomRead(t *testing.T) {
 	}
 }
 
-func BenchmarkRead(b *testing.B) {
+func TestReadFile(t *testing.T) {
+	file, _ := os.Open("testdata/countries.csv")
+	workbook, err := csv.Read(file)
+	assert.NoError(t, err)
+	assert.NotNil(t, workbook)
+}
+
+func BenchmarkReadBasicString(b *testing.B) {
 	const input string = "\"First\",\"Second\",\"Third\",\"Fourth\"\n\n\nFoo,Bar,Baz,?\r\n1,2,3,4,,5"
 	for n := 0; n < b.N; n++ {
 		csv.Read(strings.NewReader(input))
+	}
+}
+
+func BenchmarkReadLargeFile(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		file, _ := os.Open("testdata/countries.csv")
+		csv.Read(file)
 	}
 }

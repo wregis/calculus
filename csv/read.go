@@ -3,10 +3,20 @@ package csv
 import (
 	"bufio"
 	"io"
+	"os"
 	"strings"
 
 	"github.com/wregis/calculus"
 )
+
+// ReadFile opens a file for reading as CSV and create a workbook from it with default configuration.
+func ReadFile(path string) (calculus.Workbook, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, calculus.NewError(err, "Failed to open file")
+	}
+	return Read(file)
+}
 
 // Read receives a reader and create a workbook from it with default CSV configuration.
 func Read(in io.Reader) (calculus.Workbook, error) {

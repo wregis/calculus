@@ -23,7 +23,7 @@ func (f File) Write(workbook calculus.Workbook, out io.Writer) (err error) {
 
 	prevRow := 0
 	writer := bufio.NewWriter(out)
-	sheet.Rows().StableIterate(func(rIndex int, row calculus.Row) {
+	sheet.Rows().OrderedWalk(func(rIndex int, row calculus.Row) {
 		if prevRow != 0 {
 			writer.WriteRune('\n')
 		}
@@ -35,7 +35,7 @@ func (f File) Write(workbook calculus.Workbook, out io.Writer) (err error) {
 		prevRow++
 
 		prevCol := 0
-		row.StableIterate(func(cIndex int, cell calculus.Cell) {
+		row.OrderedWalk(func(cIndex int, cell calculus.Cell) {
 			if prevCol != 0 {
 				writer.WriteString(f.Delimiter)
 			}

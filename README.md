@@ -23,7 +23,7 @@ Format|Read|Write|Package
 -:|:-:|:-:|-
 CSV|✔️|✔️|github.com/wregis/calculus/csv
 GNumeric|➖ (partial)|➖ (partial)|github.com/wregis/calculus/gnumeric
-ODS (Open Document Sheet) |❌|❌|github.com/wregis/calculus/ods (planned)
+ODS (Open Document Sheet) |➖ (partial)|❌|github.com/wregis/calculus/ods (planned)
 MS-XLS (Microsoft Excel Binary File) |❌|❌|github.com/wregis/calculus/xls (planned)
 XLSX (Office Open XML, Spreadsheet ML)|➖ (partial)|➖ (partial)|github.com/wregis/calculus/xlsx
 

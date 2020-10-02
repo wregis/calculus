@@ -1,5 +1,9 @@
 package calculus
 
+import (
+	"github.com/wregis/calculus/internal/errors"
+)
+
 // New creates a workbook with default options and a single sheet.
 func New() Workbook {
 	return &workbook{
@@ -104,7 +108,7 @@ func (w *workbook) ActiveSheet() Sheet {
 
 func (w *workbook) AddSheet(name string) (Sheet, error) {
 	if w.Sheet(name) != nil {
-		return nil, NewErrorf(nil, "Workbook already contains a sheet named %s", name)
+		return nil, errors.Newf(nil, "Workbook already contains a sheet named %s", name)
 	}
 	sheet := NewSheet(name)
 	w.sheets = append(w.sheets, sheet)
@@ -114,7 +118,7 @@ func (w *workbook) AddSheet(name string) (Sheet, error) {
 
 func (w *workbook) AddSheetFirst(name string) (Sheet, error) {
 	if w.Sheet(name) != nil {
-		return nil, NewErrorf(nil, "Workbook already contains a sheet named %s", name)
+		return nil, errors.Newf(nil, "Workbook already contains a sheet named %s", name)
 	}
 	sheet := NewSheet(name)
 	w.sheets = append([]Sheet{sheet}, w.sheets...)
@@ -132,7 +136,7 @@ func (w *workbook) RemoveSheet(name string) error {
 			return nil
 		}
 	}
-	return NewErrorf(nil, "There is no sheet with name %s", name)
+	return errors.Newf(nil, "There is no sheet with name %s", name)
 }
 
 func (w *workbook) Sheets() []Sheet {

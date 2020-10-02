@@ -2,29 +2,48 @@ package gnumeric
 
 import "encoding/xml"
 
-// Boolean
-type Boolean uint8
+// Most structs here are based on the gnumeric spec at https://gitlab.gnome.org/GNOME/gnumeric/-/blob/master/gnumeric.xsd
 
-// Orientation is a printing orientation
-type Orientation string
-
+// GNumeric boolean equivalent
 const (
-	OrientationLandscape Orientation = "landscape"
-	OrientationPortrait  Orientation = "portrait"
+	BooleanFalse uint8 = 0
+	BooleanTrue  uint8 = 1
 )
 
-type Visibility string
-
+// Sheet printing orientation
 const (
-	VisibilityVisible Visibility = "GNM_SHEET_VISIBILITY_VISIBLE"
+	OrientationLandscape string = "landscape"
+	OrientationPortrait  string = "portrait"
 )
 
-type ValueType int
-
+// Sheet visibility
 const (
-	ValueTypeBoolean ValueType = 20
-	ValueTypeNumber  ValueType = 40
-	ValueTypeString  ValueType = 60
+	VisibilityVisible    string = "GNM_SHEET_VISIBILITY_VISIBLE"
+	VisibilityHidden     string = "GNM_SHEET_VISIBILITY_HIDDEN"
+	VisibilityVeryHidden string = "GNM_SHEET_VISIBILITY_VERY_HIDDEN"
+)
+
+// Cell value type
+const (
+	ValueTypeEmpty     uint8 = 10
+	ValueTypeBoolean   uint8 = 20
+	ValueTypeInteger   uint8 = 30
+	ValueTypeFloat     uint8 = 40
+	ValueTypeError     uint8 = 50
+	ValueTypeString    uint8 = 60
+	ValueTypeCellRange uint8 = 70
+	ValueTypeArray     uint8 = 80
+)
+
+// Cell content alignment
+const (
+	HorizontalAlignLeft   string = "GNM_HALIGN_LEFT"   // 1
+	HorizontalAlignRight  string = "GNM_HALIGN_RIGHT"  // 2
+	HorizontalAlignCenter string = "GNM_HALIGN_CENTER" // 3
+	HorizontalAlignFill   string = "GNM_HALIGN_FILL"   // 5
+	VerticalAlignTop      string = "GNM_VALIGN_TOP"    // T
+	VerticalAlignCenter   string = "GNM_VALIGN_CENTER" // C
+	VerticalAlignBottom   string = "GNM_VALIGN_BOTTOM" // B
 )
 
 // Workbook is a document root element
@@ -40,11 +59,22 @@ type Workbook struct {
 	UIData         UIData         `xml:"UIData"`
 }
 
+// Version  is the document generator application version info
 type Version struct {
-	Epoch int    `xml:",attr"`
-	Major int    `xml:",attr"`
-	Minor int    `xml:",attr"`
+	Epoch uint16 `xml:",attr"`
+	Major uint16 `xml:",attr"`
+	Minor uint16 `xml:",attr"`
 	Full  string `xml:",attr"`
+}
+
+type Calculation struct {
+	ManualRecalculation bool    `xml:"ManualRecalc,attr"`
+	EnableIteration     bool    `xml:",attr"`
+	MaxIterations       uint    `xml:",attr"`
+	FloatRadix          uint8   `xml:",attr"`
+	FloatDigits         uint8   `xml:",attr"`
+	IterationTolerance  float64 `xml:",attr"`
+	DateConvention      string  // "Apple:1904" or "ODF:1899"
 }
 
 // Attributes is a document configuration root element, direct child of Workbook.
@@ -54,6 +84,7 @@ type Attributes struct {
 
 // Attribute is a single document attribute.
 type Attribute struct {
+	Type  uint8  `xml:"type,omitempty"` // must be 4
 	Name  string `xml:"name"`
 	Value string `xml:"value"`
 }
@@ -76,8 +107,8 @@ type SheetNameIndex struct {
 
 // Geometry is the document viewport information, direct child of Workbook.
 type Geometry struct {
-	Width  int `xml:",attr"`
-	Height int `xml:",attr"`
+	Width  uint16 `xml:",attr,omitempty"`
+	Height uint16 `xml:",attr,omitempty"`
 }
 
 // Sheets is the document sheets list root element, direct child of Workbook.
@@ -87,16 +118,16 @@ type Sheets struct {
 
 // Sheet is a single worksheet with its own configuration.
 type Sheet struct {
-	DisplayFormulas     Boolean    `xml:",attr"`
-	HideZero            Boolean    `xml:",attr"`
-	HideGrid            Boolean    `xml:",attr"`
-	HideColHeader       Boolean    `xml:",attr"`
-	HideRowHeader       Boolean    `xml:",attr"`
-	DisplayOutlines     Boolean    `xml:",attr"` // default true
-	OutlineSymbolsBelow Boolean    `xml:",attr"` // default true
-	OutlineSymbolsRight Boolean    `xml:",attr"` // default true
-	Visibility          Visibility `xml:",attr"`
-	GridColor           string     `xml:",attr"`
+	DisplayFormulas     uint8  `xml:",attr"`
+	HideZero            uint8  `xml:",attr"`
+	HideGrid            uint8  `xml:",attr"`
+	HideColHeader       uint8  `xml:",attr"`
+	HideRowHeader       uint8  `xml:",attr"`
+	DisplayOutlines     uint8  `xml:",attr"` // default true
+	OutlineSymbolsBelow uint8  `xml:",attr"` // default true
+	OutlineSymbolsRight uint8  `xml:",attr"` // default true
+	Visibility          string `xml:",attr"`
+	GridColor           string `xml:",attr"`
 	Name                string
 	MaxColumn           int `xml:"MaxCol"`
 	MaxRow              int
@@ -124,9 +155,9 @@ type Name struct {
 
 // PrintInformation
 type PrintInformation struct {
-	Margins     Margins     `xml:"Margins"`
-	Orientation Orientation `xml:"orientation"`
-	Paper       string      `xml:"paper"`
+	Margins     Margins `xml:"Margins"`
+	Orientation string  `xml:"orientation"`
+	Paper       string  `xml:"paper"`
 }
 
 // Margins
@@ -161,31 +192,31 @@ type StyleRegion struct {
 
 // Style
 type Style struct {
-	HAlign       string  `xml:",attr"`
-	VAlign       string  `xml:",attr"`
-	WrapText     Boolean `xml:",attr"`
-	ShrinkToFit  Boolean `xml:",attr"`
-	Rotation     Boolean `xml:",attr"`
-	Orient       Boolean `xml:",attr"`
-	Shade        Boolean `xml:",attr"`
-	Indent       Boolean `xml:",attr"`
-	Locked       Boolean `xml:",attr"`
-	Hidden       Boolean `xml:",attr"`
-	Fore         string  `xml:",attr"`
-	Back         string  `xml:",attr"`
-	PatternColor string  `xml:",attr"`
-	Format       string  `xml:",attr"`
-	Font         *Font   `xml:"Font,omitempty"`
+	HorizontalAlign string `xml:"HAlign,attr"`
+	VerticalAlign   string `xml:"VAlign,attr"`
+	WrapText        uint8  `xml:",attr"`
+	ShrinkToFit     uint8  `xml:",attr"`
+	Rotation        uint8  `xml:",attr"`
+	Orient          uint8  `xml:",attr"`
+	Shade           uint8  `xml:",attr"`
+	Indent          uint8  `xml:",attr"`
+	Locked          uint8  `xml:",attr"`
+	Hidden          uint8  `xml:",attr"`
+	Fore            string `xml:",attr"`
+	Back            string `xml:",attr"`
+	PatternColor    string `xml:",attr"`
+	Format          string `xml:",attr"`
+	Font            *Font  `xml:",omitempty"`
 	// StyleBorder  *StyleBorder `xml:"StyleBorder,omitempty"`
 }
 
 // Font
 type Font struct {
 	Unit          float32 `xml:",attr"`
-	Bold          Boolean `xml:",attr"`
-	Italic        Boolean `xml:",attr"`
-	Underline     Boolean `xml:",attr"`
-	StrikeThrough Boolean `xml:",attr"`
+	Bold          uint8   `xml:",attr"`
+	Italic        uint8   `xml:",attr"`
+	Underline     uint8   `xml:",attr"`
+	StrikeThrough uint8   `xml:",attr"`
 	Script        string  `xml:",attr"` // ???
 	Name          string  `xml:",chardata"`
 }
@@ -202,7 +233,7 @@ type StyleBorder struct {
 
 // Border
 type Border struct {
-	Style Boolean `xml:",attr"`
+	Style uint8 `xml:",attr"`
 }
 
 // Columns is the metadata root element related to a sheet column, direct child of Workbook.
@@ -217,7 +248,7 @@ type ColumnInfo struct {
 	Width       float32 `xml:"Unit,attr"`
 	LeftMargin  int     `xml:"MarginA,attr,omitempty"`
 	RightMargin int     `xml:"MarginB,attr,omitempty"`
-	Hidden      Boolean `xml:",attr,omitempty"`
+	Hidden      uint8   `xml:",attr,omitempty"`
 	Count       int     `xml:",attr,omitempty"`
 }
 
@@ -233,7 +264,7 @@ type RowInfo struct {
 	Height       float32 `xml:"Unit,attr"`
 	TopMargin    int     `xml:"MarginA,attr,omitempty"`
 	BottomMargin int     `xml:"MarginB,attr,omitempty"`
-	Hidden       Boolean `xml:",attr,omitempty"`
+	Hidden       uint8   `xml:",attr,omitempty"`
 	Count        int     `xml:",attr,omitempty"`
 }
 
@@ -259,11 +290,12 @@ type Cells struct {
 
 // Cell is a sheet individual value.
 type Cell struct {
-	Column int       `xml:"Col,attr"`
-	Row    int       `xml:",attr"`
-	Style  int       `xml:",attr,omitempty"`
-	Type   ValueType `xml:"ValueType,attr,omitempty"`
-	Value  string    `xml:",chardata"`
+	Column int    `xml:"Col,attr"`
+	Row    int    `xml:",attr"`
+	Style  int    `xml:",attr,omitempty"`
+	Type   uint8  `xml:"ValueType,attr,omitempty"`
+	Format string `xml:"ValueFormat,attr,omitempty"`
+	Value  string `xml:",chardata"`
 }
 
 // SheetLayout
@@ -273,5 +305,5 @@ type SheetLayout struct {
 
 // UIData
 type UIData struct {
-	SelectedTab int `xml:",attr"`
+	SelectedTab uint16 `xml:",attr"`
 }

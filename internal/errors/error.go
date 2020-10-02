@@ -1,15 +1,15 @@
-package calculus
+package errors
 
 import "fmt"
 
-func NewError(parent error, message string) error {
+func New(parent error, message string) error {
 	return &Error{
 		Message: message,
 		Parent:  parent,
 	}
 }
 
-func NewErrorf(parent error, format string, args ...interface{}) error {
+func Newf(parent error, format string, args ...interface{}) error {
 	return &Error{
 		Message: fmt.Sprintf(format, args...),
 		Parent:  parent,

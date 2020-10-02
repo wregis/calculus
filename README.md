@@ -1,6 +1,6 @@
 # Calculus
 
-[![Build Status](https://github.com/wregis/calculus/workflows/Go/badge.svg)](https://github.com/wregis/calculus/actions)
+[![Build Status][2]][1]
 
 Calculus is a spreadsheet generator for Golang. It is intended to be used for generating and reading row and column
 oriented files.
@@ -19,13 +19,13 @@ go get github.com/wregis/calculus
 
 This will then make the following formats and packages available to you:
 
-Format|Read|Write|Package
--:|:-:|:-:|-
-CSV|✔️|✔️|github.com/wregis/calculus/csv
-GNumeric|➖ (partial)|➖ (partial)|github.com/wregis/calculus/gnumeric
-ODS (Open Document Sheet) |➖ (partial)|❌|github.com/wregis/calculus/ods (planned)
-MS-XLS (Microsoft Excel Binary File) |❌|❌|github.com/wregis/calculus/xls (planned)
-XLSX (Office Open XML, Spreadsheet ML)|➖ (partial)|➖ (partial)|github.com/wregis/calculus/xlsx
+Format                                 | Package
+-:                                     | -
+CSV                                    | github.com/wregis/calculus/csv
+GNumeric                               | github.com/wregis/calculus/gnumeric
+ODS (Open Document Sheet)              | github.com/wregis/calculus/ods
+MS-XLS (Microsoft Excel Binary File)   | github.com/wregis/calculus/xls
+XLSX (Office Open XML, Spreadsheet ML) | github.com/wregis/calculus/xlsx
 
 You can import and/or export data using the format package and can handle data using the main package:
 
@@ -58,6 +58,24 @@ func main() {
 }
 ```
 
+### Features
+
+* [x] Support basic r/w CSV
+* [ ] Support type hint on CSV
+* [ ] Support formating on CSV
+* [x] Support basic r/w XLSX
+* [ ] Support styling on XLSX
+* [ ] Support formating on XLSX
+* [ ] Support basic r/w ODS
+* [ ] Support styling on ODS
+* [ ] Support formating on ODS
+* [x] Support basic r/w GNumeric
+* [ ] Support styling on GNumeric
+* [ ] Support formating on GNumeric
+* [ ] Support basic r/w XLS
+* [ ] Support styling on XLS
+* [ ] Support formating on XLS
+
 ## Supported go versions
 
 We support the two latest major Go versions, wich are 1.14 and 1.15 at the moment.
@@ -71,3 +89,6 @@ When submitting an issue, we ask that you please include a complete test functio
 ## License
 
 This project is licensed under the terms of the MIT license.
+
+[1]: https://github.com/wregis/calculus/actions
+[2]: https://github.com/wregis/calculus/workflows/Go/badge.svg

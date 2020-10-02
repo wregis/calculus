@@ -7,13 +7,14 @@ import (
 	"io"
 
 	"github.com/wregis/calculus"
+	"github.com/wregis/calculus/internal/errors"
 )
 
 // Write takes a workbook object and writes it to a XLSX file.
 func Write(workbook calculus.Workbook, out io.Writer) error {
 	sheets := workbook.Sheets()
 	if sheets == nil || len(sheets) == 0 {
-		return calculus.NewError(nil, "No sheet to write XLSX")
+		return errors.New(nil, "No sheet to write XLSX")
 	}
 	writer := zip.NewWriter(out)
 	writer.RegisterCompressor(zip.Deflate, func(w io.Writer) (io.WriteCloser, error) {
@@ -38,7 +39,7 @@ func Write(workbook calculus.Workbook, out io.Writer) error {
 		return err
 	}
 	if err := writer.Close(); err != nil {
-		return calculus.NewError(err, "Unable to close ZIP archive")
+		return errors.New(err, "Unable to close ZIP archive")
 	}
 	return nil
 }
@@ -48,17 +49,17 @@ const xmlHeader = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>
 func writeXMLToFile(writer *zip.Writer, name string, data interface{}) error {
 	file, err := writer.Create(name)
 	if err != nil {
-		return calculus.NewError(err, "Could not create file")
+		return errors.New(err, "Could not create file")
 	}
 	if _, err := file.Write([]byte(xmlHeader)); err != nil {
-		return calculus.NewError(err, "Could not write XML header")
+		return errors.New(err, "Could not write XML header")
 	}
 	var buf []byte
 	if buf, err = xml.Marshal(data); err != nil {
-		return calculus.NewError(err, "Failed to serialize XML")
+		return errors.New(err, "Failed to serialize XML")
 	}
 	if _, err := file.Write(buf); err != nil {
-		return calculus.NewError(err, "Could not write file data")
+		return errors.New(err, "Could not write file data")
 	}
 	return nil
 }

@@ -1,21 +1,23 @@
-package calculus
+package coordinate
 
 import (
 	"math"
 	"regexp"
 	"strconv"
+
+	"github.com/wregis/calculus/internal/errors"
 )
 
 var coordinateExp = regexp.MustCompile(`^([A-Z]+)(\d+)$`)
 
-// ParseCoordinate tries to read the row and column information from a string consisting on N english alphabet leters
+// Parse tries to read the row and column information from a string consisting on N english alphabet leters
 // followed by a integer number. The letters on the first part represents the columns and the number on the second and
 // last part the row (starting on 1).
-func ParseCoordinate(coordinate string) (int, int, error) {
-	if !coordinateExp.MatchString(coordinate) {
-		return -1, -1, NewErrorf(nil, `Invalid coordinate "%s"`, coordinate)
+func Parse(key string) (int, int, error) {
+	if !coordinateExp.MatchString(key) {
+		return -1, -1, errors.Newf(nil, `Invalid coordinate "%s"`, key)
 	}
-	matches := coordinateExp.FindStringSubmatch(coordinate)
+	matches := coordinateExp.FindStringSubmatch(key)
 
 	column := 0
 	for i, l := 0, len(matches[1]); i < l; i++ {
@@ -30,11 +32,11 @@ func ParseCoordinate(coordinate string) (int, int, error) {
 	return row - 1, column, nil
 }
 
-// Coordinate calculates the coordinate for a given row and column pair consisting of aN english alphabet letters
+// Format calculates the coordinate for a given row and column pair consisting of aN english alphabet letters
 // representing the column followed by the row number (starting on 1). The row and column must be non negative integers.
-func Coordinate(row, column int) (string, error) {
+func Format(row, column int) (string, error) {
 	if row < 0 || column < 0 {
-		return "", NewErrorf(nil, "Row (%d) and column (%d) values must be non negative", row, column)
+		return "", errors.Newf(nil, "Row (%d) and column (%d) values must be non negative", row, column)
 	}
 	letter := ""
 	for {

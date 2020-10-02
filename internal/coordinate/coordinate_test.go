@@ -1,10 +1,10 @@
-package calculus_test
+package coordinate_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/wregis/calculus"
+	"github.com/wregis/calculus/internal/coordinate"
 )
 
 func TestParseCoordinate(t *testing.T) {
@@ -20,7 +20,7 @@ func TestParseCoordinate(t *testing.T) {
 	}
 	for _, testCase := range cases {
 		t.Run(testCase.input, func(t *testing.T) {
-			row, column, err := calculus.ParseCoordinate(testCase.input)
+			row, column, err := coordinate.Parse(testCase.input)
 			assert.NoError(t, err)
 			assert.Equal(t, testCase.output[0], row)
 			assert.Equal(t, testCase.output[1], column)
@@ -30,13 +30,13 @@ func TestParseCoordinate(t *testing.T) {
 
 func BenchmarkParseCoordinateLow(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		calculus.ParseCoordinate("E10")
+		coordinate.Parse("E10")
 	}
 }
 
 func BenchmarkParseCoordinateLarge(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		calculus.ParseCoordinate("ALL1000")
+		coordinate.Parse("ALL1000")
 	}
 }
 
@@ -53,7 +53,7 @@ func TestCoordinate(t *testing.T) {
 	}
 	for _, testCase := range cases {
 		t.Run(testCase.output, func(t *testing.T) {
-			key, err := calculus.Coordinate(testCase.input[0], testCase.input[1])
+			key, err := coordinate.Format(testCase.input[0], testCase.input[1])
 			assert.NoError(t, err)
 			assert.Equal(t, testCase.output, key)
 		})
@@ -62,12 +62,12 @@ func TestCoordinate(t *testing.T) {
 
 func BenchmarkCoordinateLow(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		calculus.Coordinate(16, 24)
+		coordinate.Format(16, 24)
 	}
 }
 
 func BenchmarkCoordinateLarge(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		calculus.Coordinate(999, 999)
+		coordinate.Format(999, 999)
 	}
 }

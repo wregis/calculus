@@ -1,5 +1,9 @@
 package calculus
 
+import (
+	"github.com/wregis/calculus/internal/coordinate"
+)
+
 // SheetState represents a visibility state for a sheet
 type SheetState string
 
@@ -34,10 +38,12 @@ type Sheet interface {
 	// ValueByRef returns the stored value itself using a string coordinate.
 	ValueByRef(string) interface{}
 	// SetValue stores a value on a specific position.
-	SetValue(int, int, interface{})
+	SetValue(int, int, interface{}) Cell
 	// SetValue stores a value on a specific position using a string coordinate.
-	SetValueByRef(string, interface{})
+	SetValueByRef(string, interface{}) Cell
+	// State returns the current visibility state of the sheet
 	State() SheetState
+	// SetState updates the current visibility state of the sheet
 	SetState(SheetState)
 }
 
@@ -66,26 +72,28 @@ func (s *sheet) Value(row, column int) interface{} {
 	return nil
 }
 
-func (s *sheet) ValueByRef(coordinate string) interface{} {
-	row, column, err := ParseCoordinate(coordinate)
+func (s *sheet) ValueByRef(key string) interface{} {
+	row, column, err := coordinate.Parse(key)
 	if err != nil {
 		return nil
 	}
 	return s.Value(row, column)
 }
 
-func (s *sheet) SetValue(row, column int, value interface{}) {
+func (s *sheet) SetValue(row, column int, value interface{}) Cell {
 	if cell := NewCell(value); cell != nil {
 		s.rows.SetCell(row, column, cell)
+		return cell
 	}
+	return nil
 }
 
-func (s *sheet) SetValueByRef(coordinate string, value interface{}) {
-	row, column, err := ParseCoordinate(coordinate)
+func (s *sheet) SetValueByRef(key string, value interface{}) Cell {
+	row, column, err := coordinate.Parse(key)
 	if err != nil {
-		return
+		return nil
 	}
-	s.SetValue(row, column, value)
+	return s.SetValue(row, column, value)
 }
 
 func (s *sheet) State() SheetState {

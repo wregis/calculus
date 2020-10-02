@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/wregis/calculus"
+	"github.com/wregis/calculus/internal/errors"
 )
 
 // Read creates a Workbook from an input data on GNumeric format.
@@ -22,12 +23,12 @@ func Read(in io.Reader) (calculus.Workbook, error) {
 func ReadFrom(in io.Reader) (*Workbook, error) {
 	r, err := gzip.NewReader(in)
 	if err != nil {
-		return nil, calculus.NewError(err, "Failed to read or decompress data")
+		return nil, errors.New(err, "Failed to read or decompress data")
 	}
 	decoder := xml.NewDecoder(r)
 	workbook := &Workbook{}
 	if err := decoder.Decode(workbook); err != nil {
-		return nil, calculus.NewError(err, "Failed to decode XML data")
+		return nil, errors.New(err, "Failed to decode XML data")
 	}
 	return workbook, nil
 }
@@ -48,16 +49,27 @@ func ParseWorkbook(source *Workbook) (calculus.Workbook, error) {
 		if sheet.Cells.Cells != nil {
 			for _, cell := range sheet.Cells.Cells {
 				switch cell.Type {
-				case ValueTypeString:
-					worksheet.SetValue(cell.Row, cell.Column, cell.Value)
+				case ValueTypeEmpty:
+					worksheet.SetValue(cell.Row, cell.Column, nil)
 				case ValueTypeBoolean:
 					worksheet.SetValue(cell.Row, cell.Column, cell.Value == "TRUE")
-				case ValueTypeNumber:
+				case ValueTypeInteger:
+					i, err := strconv.ParseInt(cell.Value, 10, 64)
+					if err != nil {
+						return nil, errors.New(err, "Failed to parse integer value")
+					}
+					worksheet.SetValue(cell.Row, cell.Column, i)
+				case ValueTypeFloat:
 					f, err := strconv.ParseFloat(cell.Value, 64)
 					if err != nil {
-						return nil, calculus.NewError(err, "Failed to parse numeric value")
+						return nil, errors.New(err, "Failed to parse floating point value")
 					}
 					worksheet.SetValue(cell.Row, cell.Column, f)
+				case ValueTypeError: // TODO?
+				case ValueTypeString:
+					worksheet.SetValue(cell.Row, cell.Column, cell.Value)
+				case ValueTypeCellRange: // TODO?
+				case ValueTypeArray: // TODO?
 				}
 			}
 		}

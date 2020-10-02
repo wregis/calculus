@@ -2,23 +2,31 @@ package csv
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"strconv"
 	"strings"
+	"time"
 	"unicode"
 
 	"github.com/wregis/calculus"
+	"github.com/wregis/calculus/internal/duration"
+	"github.com/wregis/calculus/internal/errors"
 )
 
+// Write generates a CSV file from the current active worksheet on the workbook with default CSV configutation.
 func Write(workbook calculus.Workbook, out io.Writer) error {
 	file := New()
 	return file.Write(workbook, out)
 }
 
+// Write generates a CSV file from the current active worksheet on the workbook.
+//
+// Most of types will be printed in the most basic forms and special formatation will be ignored.
 func (f File) Write(workbook calculus.Workbook, out io.Writer) (err error) {
 	sheet := workbook.ActiveSheet()
 	if sheet == nil {
-		return calculus.NewError(nil, "No sheet to write CSV")
+		return errors.New(nil, "No sheet to write CSV")
 	}
 
 	prevRow := 0
@@ -64,7 +72,7 @@ func (f File) Write(workbook calculus.Workbook, out io.Writer) (err error) {
 				value = f.Enclosure + value + f.Enclosure
 			}
 			if _, werr := writer.WriteString(value); werr != nil {
-				err = calculus.NewError(werr, "Failed to write item")
+				err = errors.New(werr, "Failed to write item")
 			}
 		})
 	})
@@ -74,36 +82,43 @@ func (f File) Write(workbook calculus.Workbook, out io.Writer) (err error) {
 }
 
 func (f File) stringValue(value interface{}) string {
-	switch v := value.(type) {
-	case bool:
-		return strconv.FormatBool(v)
-	case float32:
-		return strconv.FormatFloat(float64(v), 'f', -1, 32)
-	case float64:
-		return strconv.FormatFloat(v, 'f', -1, 64)
-	case int:
-		return strconv.FormatInt(int64(v), 10)
-	case int8:
-		return strconv.FormatInt(int64(v), 10)
-	case int16:
-		return strconv.FormatInt(int64(v), 10)
-	case int32:
-		return strconv.FormatInt(int64(v), 10)
-	case int64:
-		return strconv.FormatInt(v, 10)
-	case uint:
-		return strconv.FormatUint(uint64(v), 10)
-	case uint8:
-		return strconv.FormatUint(uint64(v), 10)
-	case uint16:
-		return strconv.FormatUint(uint64(v), 10)
-	case uint32:
-		return strconv.FormatUint(uint64(v), 10)
-	case uint64:
-		return strconv.FormatUint(v, 10)
-	case string:
-		return v
-	default:
-		return ""
+	if value != nil {
+		switch v := value.(type) {
+		case bool:
+			return strconv.FormatBool(v)
+		case float32:
+			return strconv.FormatFloat(float64(v), 'f', -1, 32)
+		case float64:
+			return strconv.FormatFloat(v, 'f', -1, 64)
+		case int:
+			return strconv.FormatInt(int64(v), 10)
+		case int8:
+			return strconv.FormatInt(int64(v), 10)
+		case int16:
+			return strconv.FormatInt(int64(v), 10)
+		case int32:
+			return strconv.FormatInt(int64(v), 10)
+		case int64:
+			return strconv.FormatInt(v, 10)
+		case uint:
+			return strconv.FormatUint(uint64(v), 10)
+		case uint8:
+			return strconv.FormatUint(uint64(v), 10)
+		case uint16:
+			return strconv.FormatUint(uint64(v), 10)
+		case uint32:
+			return strconv.FormatUint(uint64(v), 10)
+		case uint64:
+			return strconv.FormatUint(v, 10)
+		case string:
+			return v
+		case time.Time:
+			return v.Format("2006-01-02T15:04:05.999999")
+		case time.Duration:
+			return duration.Format(v)
+		default:
+			return fmt.Sprint(v)
+		}
 	}
+	return ""
 }

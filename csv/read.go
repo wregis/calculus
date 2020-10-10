@@ -15,22 +15,22 @@ import (
 )
 
 // ReadFile opens a file for reading as CSV and create a workbook from it with default configuration.
-func ReadFile(path string, hints ...Hint) (calculus.Workbook, error) {
+func ReadFile(path string) (calculus.Workbook, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, errors.New(err, "Failed to open file")
 	}
-	return Read(file, hints...)
+	return Read(file)
 }
 
 // Read receives a reader and create a workbook from it with default CSV configuration.
-func Read(in io.Reader, hints ...Hint) (calculus.Workbook, error) {
+func Read(in io.Reader) (calculus.Workbook, error) {
 	file := New()
-	return file.Read(in, hints...)
+	return file.Read(in)
 }
 
 // Read reads a CSV file with given configuration.
-func (f File) Read(in io.Reader, hints ...Hint) (calculus.Workbook, error) {
+func (f *File) Read(in io.Reader) (calculus.Workbook, error) {
 	workbook := calculus.New()
 	sheet, _ := workbook.AddSheet("Sheet1")
 
@@ -61,8 +61,8 @@ func (f File) Read(in io.Reader, hints ...Hint) (calculus.Workbook, error) {
 			if len(value) == 0 {
 				continue
 			}
-			if index < len(hints) {
-				switch hint := hints[index]; hint.Type {
+			if index < len(f.Hints) {
+				switch hint := f.Hints[index]; hint.Type {
 				case calculus.CellValueTypeBoolean:
 					b, err := strconv.ParseBool(value)
 					if err != nil {

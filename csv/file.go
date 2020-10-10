@@ -2,10 +2,16 @@ package csv
 
 // File is a CSV file configuration.
 type File struct {
-	Delimiter  string
-	Enclosure  string
+	// Delimiter tells how to break a line into fields.
+	Delimiter string
+	// Enclosure indicates how strings with spaces, Delimiter, Enclosure or EscapeChar should be enveloped.
+	Enclosure string
+	// EscapeChar is used for certain cases where Delimiter, Enclosure or EspaceChar itself are present on the string.
 	EscapeChar rune
-	Comment    string
+	// Comment indicates how lines to ignore are prefixed.
+	Comment string
+	// Hints makes it possible for the reader to convert read data from string more specific types.
+	Hints []Hint
 }
 
 // New creates a new CSV file default configuration.

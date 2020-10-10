@@ -56,12 +56,13 @@ func TestHints(t *testing.T) {
 		"A2": int64(42), "B2": -0.0002, "C2": false, "D2": "World",
 		"A3": int64(-99), "B3": 0.12345, "C3": true, "D3": "Foo",
 	}
-	workbook, err := csv.Read(
-		strings.NewReader(input),
+	config := csv.New()
+	config.Hints = []csv.Hint{
 		csv.Hint{Type: calculus.CellValueTypeInteger},
 		csv.Hint{Type: calculus.CellValueTypeFloat},
 		csv.Hint{Type: calculus.CellValueTypeBoolean},
-	)
+	}
+	workbook, err := config.Read(strings.NewReader(input))
 	assert.NoError(t, err)
 	assert.NotNil(t, workbook)
 	for key := range golden {
